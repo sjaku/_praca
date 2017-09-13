@@ -8,6 +8,7 @@ user = "pcredit"
 password = "OE06jiai0"
 
 File2Send = "C:\\Users\\sjaku\\Desktop\\linuxpl\\"
+MacOSx2Send = "//Users//szymon//Downloads//[Dla_sklepu]//banery//"
 FTP_Server = "//domains//kreatywneklocki.pl//public_html//img//lego2"
 
 
