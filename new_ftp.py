@@ -8,7 +8,7 @@ password = "OE06jiai0"
 
 File2Send = "C:\\Users\\sjaku\\Desktop\\linuxpl\\"
 MacOSx2Send = "//Users//szymon//Downloads//[Dla_sklepu]//banery//slider_baner//"
-FTP_Server = "//domains//kreatywneklocki.pl//public_html//img//lego2//"
+FTP_Server = "//domains//kreatywneklocki.pl//public_html//img//lego//"
 
 
 ftp = FTP(host)
@@ -28,6 +28,11 @@ def deleteFileFromFTP():
         ftp.delete(FTP_Server + f)
         print "FTP file deleted: " + FTP_Server + f
         print "-" * 70
+
+def createDirectory():
+    dir = "lego"
+    ftp.mkd(dir)
+    print "FTP directory created: " + dir
 
 def deleteDirectoryFromFTP():
 
