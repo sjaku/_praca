@@ -80,11 +80,39 @@ def get_data_save_CSV(url):
 
     with open('house_list.csv', 'ab') as f:
         w = csv.writer(f)
+<<<<<<< HEAD
         #w.writerow(["Title", "Pelna_cena", "Powierzchnia", "Powierchnia_dzialki", "Ilosc_pieter"])
         for row in courses_list:
             w.writerow(row)
+=======
+        w.writerow(["Title", "Pelna_cena", "Powierzchnia", "Powierchnia_dzialki", "Ilosc_pieter"])
+        w.writerows(courses_list)
+        #for row in courses_list:
+        #    w.writerow(row)
 
+    def CSV_joinFiles(file_header, file_data, file_out):
+        with open(file_out, 'w') as f:
+            writer = csv.writer(f)
 
+            with open(file_header, 'r') as h:
+                r = csv.reader(h, delimiter=';')
+                for a in r:
+                    writer.writerow(a)
+                    # print a
+
+            with open(file_data, 'r') as d:
+                r = csv.reader(d, delimiter=';')
+                for a in r:
+                    writer.writerow(a)
+                    # print a
+    '''
+>>>>>>> 0fe5bad6ffab6429ffe14bb25b00cbef4d6dbd2b
+
+    with open('house_list.csv', 'ab') as f:
+        writer = csv.writer(f, delimiter=';', lineterminator='\n')
+        writer.writerows(w for w in courses_list)
+
+    '''
 
     '''
     title = soup.find("h1", {"itemprop": "name"}).text.encode("utf-8")
@@ -152,7 +180,7 @@ def get_data_save_CSV(url):
     '''
 
 def main_spider(max_page):
-
+    os.remove('house_list.csv')
     for num in range(1,max_page):
         #utworzenie nowego stringa przechowujacego ziterowane adresy stron do przetworzenia
         url_otodom_new = url_otodom + '?page=' + str(num)
