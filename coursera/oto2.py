@@ -49,7 +49,7 @@ def get_data_save_CSV(url):
         print li_param_area_house
         li_param_area = dom.find("li", class_="param_terrain_area")
         if li_param_area is None:
-            li_param_area = 'BRAK DANYCH'
+            li_param_area = 'n/a'
             print li_param_area
         else:
             li_param_area = li_param_area.strong.text.encode("utf-8")
@@ -57,13 +57,20 @@ def get_data_save_CSV(url):
 
         li_floors = dom.find("li", class_="param_floors_num")
         if li_floors is None:
-            li_floors = 'BRAK DANYCH'
+            li_floors = 'n/a'
             print li_floors
         else:
             li_floors = li_floors.strong.text.encode("utf-8")
             print li_floors
 
-        course = [title, li_price_full, li_param_area_house, li_param_area, li_floors]
+        price = float(li_price_full.rsplit(" ", 1)[0].replace(" ", ""))
+        #print type(price), price
+        area = float(li_param_area_house.rsplit(" ",1)[0].replace(",","."))
+        #print area
+        price_meter = round(price/area,2)
+        #print price_meter
+
+        course = [title, li_price_full, price_meter, li_param_area_house, li_param_area, li_floors]
 
 
     courses_list.append(course)
@@ -71,9 +78,9 @@ def get_data_save_CSV(url):
     print courses_list
 
 
-    with open('house_list.csv', 'w') as f:
+    with open('house_list.csv', 'ab') as f:
         w = csv.writer(f)
-        w.writerow(["Title", "Pelna_cena", "Powierzchnia", "Powierchnia_dzialki", "Ilosc_pieter"])
+        #w.writerow(["Title", "Pelna_cena", "Powierzchnia", "Powierchnia_dzialki", "Ilosc_pieter"])
         for row in courses_list:
             w.writerow(row)
 
