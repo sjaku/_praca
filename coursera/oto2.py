@@ -1,3 +1,5 @@
+# -*- coding: utf8 -*-
+
 import requests
 from bs4 import BeautifulSoup, Tag
 import csv
@@ -9,6 +11,7 @@ url_otodom = "https://www.otodom.pl/sprzedaz/dom/poznan/"
 
 r = requests.get(url_otodom)
 soup = BeautifulSoup(r.content, "html.parser")
+
 
 def get_max_category_pages(url_otodom):
     r = requests.get(url_otodom)
@@ -32,7 +35,7 @@ def get_data_save_CSV(url):
 
     #os.remove(destinationPath+csvfile)
     courses_list = []
-
+    global pokoje, rok_budowy, rodzaj_zabudowy, stan_wykonczenia, okna, polozenie
 
     for dom in soup.find_all('div', class_='article-offer'):
         #print dom
@@ -65,12 +68,68 @@ def get_data_save_CSV(url):
 
         price = float(li_price_full.rsplit(" ", 1)[0].replace(" ", ""))
         #print type(price), price
-        area = float(li_param_area_house.rsplit(" ",1)[0].replace(",","."))
+        area = float(li_param_area_house.rsplit(" ",1)[0].replace(" ","").replace(",","."))
         #print area
         price_meter = round(price/area,2)
         #print price_meter
 
-        course = [title, li_price_full, price_meter, li_param_area_house, li_param_area, li_floors]
+        sub_list = dom.find("ul", class_="sub-list")
+            #li = sub_list.findAll("li")[1]
+
+        li_rynek = sub_list.find_all('li')
+        for result in li_rynek:
+            if result.text.startswith("Rynek:"):
+                rynek = result.text.split(" ")[1]
+                rynek = rynek.encode("utf-8")
+                print "Rynek:", rynek
+
+        li_pokoje = sub_list.find_all('li')
+        for result in li_pokoje:
+            if result.text.startswith("Liczba pokoi"):
+                pokoje = result.text.rsplit(" ",1)[1]
+                print "Pokoje:", pokoje
+
+        li_rok_budowy = sub_list.find_all('li')
+        for result in li_rok_budowy:
+            if result.text.startswith("Rok budowy"):
+                rok_budowy = result.text.split(":")[1]
+                print "Rok budowy:", rok_budowy
+
+        li_rodzaj_zabudowy = sub_list.find_all('li')
+        for result in li_rodzaj_zabudowy:
+            if result.text.startswith("Rodzaj zabudowy:"):
+                rodzaj_zabudowy = result.text.split(":")[1]
+                rodzaj_zabudowy = rodzaj_zabudowy.encode("utf-8")
+                print "Rodzaj zabudowy:", rodzaj_zabudowy
+
+        li_stan_wykonczenia = sub_list.find_all('li')
+        for result in li_stan_wykonczenia:
+            if result.text.startswith("Stan wyko"):
+                stan_wykonczenia = result.text.split(":")[1]
+                stan_wykonczenia = stan_wykonczenia.encode("utf-8")
+                print "Stan wykończenia:", stan_wykonczenia
+
+        li_okna = sub_list.find_all('li')
+        for result in li_okna:
+            if result.text.startswith("Okna:"):
+                okna = result.text.split(":")[1]
+                okna = okna.encode("utf-8")
+                print "Okna:", okna
+
+
+        li_polozenie = sub_list.find_all('li')
+        for result in li_polozenie:
+            if result.strong.text.endswith("enie:"):
+                polozenie = result.text.split(":")[1]
+                #print "p:", polozenie
+                polozenie = polozenie.encode("utf-8")
+                print "Położenie:", polozenie
+
+
+
+        course = [title, li_price_full, price_meter, li_param_area_house, li_param_area, li_floors, rynek, pokoje, rok_budowy,
+                   rodzaj_zabudowy, stan_wykonczenia, okna, polozenie  ]
+
 
 
     courses_list.append(course)
@@ -80,104 +139,14 @@ def get_data_save_CSV(url):
 
     with open('house_list.csv', 'ab') as f:
         w = csv.writer(f)
-<<<<<<< HEAD
         #w.writerow(["Title", "Pelna_cena", "Powierzchnia", "Powierchnia_dzialki", "Ilosc_pieter"])
         for row in courses_list:
             w.writerow(row)
-=======
-        w.writerow(["Title", "Pelna_cena", "Powierzchnia", "Powierchnia_dzialki", "Ilosc_pieter"])
-        w.writerows(courses_list)
+        #w.writerows(courses_list)
         #for row in courses_list:
         #    w.writerow(row)
 
-    def CSV_joinFiles(file_header, file_data, file_out):
-        with open(file_out, 'w') as f:
-            writer = csv.writer(f)
 
-            with open(file_header, 'r') as h:
-                r = csv.reader(h, delimiter=';')
-                for a in r:
-                    writer.writerow(a)
-                    # print a
-
-            with open(file_data, 'r') as d:
-                r = csv.reader(d, delimiter=';')
-                for a in r:
-                    writer.writerow(a)
-                    # print a
-    '''
->>>>>>> 0fe5bad6ffab6429ffe14bb25b00cbef4d6dbd2b
-
-    with open('house_list.csv', 'ab') as f:
-        writer = csv.writer(f, delimiter=';', lineterminator='\n')
-        writer.writerows(w for w in courses_list)
-
-    '''
-
-    '''
-    title = soup.find("h1", {"itemprop": "name"}).text.encode("utf-8")
-
-    #print type(title), title
-
-    price = soup.find("strong", class_='box-price-value').text.encode("utf-8")
-    #price = dom.find("strong", class_='box-price-value').text.encode("utf-8")
-    #print price
-
-    #phone = soup.find("span", class_="phone-number").text
-    #print phone
-
-    pelna_cena = soup.find("li", class_="param_price")
-    if pelna_cena is None:
-        pelna_cena = 'BRAK DANYCH'
-        print pelna_cena
-    else:
-        pelna_cena = pelna_cena.text.encode("utf-8")
-        #print pelna_cena
-
-    powierzchnia = soup.find("li", class_="param_m")
-    if powierzchnia is None:
-        powierzchnia = 'BRAK DANYCH'
-        print powierzchnia
-    else:
-        powierzchnia = powierzchnia.text.encode("utf-8")
-        #print powierzchnia
-
-    powierzchnia_dzialki = soup.find("li", class_="param_terrain_area")
-    if powierzchnia_dzialki is None:
-        powierzchnia_dzialki = 'BRAK DANYCH'
-        print powierzchnia_dzialki
-    else:
-        powierzchnia_dzialki = powierzchnia_dzialki.text.encode("utf-8")
-        #print powierzchnia_dzialki
-
-    pietra = soup.find("li", class_="param_floors_num")
-    if pietra is None:
-        pietra = 'BRAK DANYCH'
-        print pietra
-    else:
-        pietra = pietra.text.encode("utf-8")
-        #print pietra
-
-    #liczba_pieter = soup.find("li", class_="param_floors_num").text
-    #print liczba_pieter
-
-    #course=[title.decode("utf-8"), short_desc.decode("utf-8"), netto_float, brutto_float]
-    for row in courses_list:
-        course = [title, pelna_cena, powierzchnia, powierzchnia_dzialki, pietra]
-        courses_list.append(course)
-
-    print courses_list
-
-
-
-
-    with open('file.csv', 'wb') as f:
-         w = csv.writer(f)
-         w.writerow(["Title", "Pelna_cena", "Powierzchnia", "Powierchnia_dzialki", "Ilosc_pieter"])
-         w.writerows(courses_list)
-         #for row in courses_list:
-         #    w.writerow(row)
-    '''
 
 def main_spider(max_page):
     os.remove('house_list.csv')
@@ -205,5 +174,5 @@ def main_spider(max_page):
 
         print "Pobrano produktow : ", count
 
-main_spider(3)
+main_spider(10)
 
