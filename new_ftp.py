@@ -4,7 +4,7 @@ import os
 
 host = "pcredit.ayz.pl"
 user = "pcredit"
-password = "OE06jiai0"
+password = "OE06jiai"
 
 File2Send = "C:\\Users\\sjaku\\Desktop\\linuxpl\\"
 MacOSx2Send = "//Users//szymon//Downloads//[Dla_sklepu]//banery//slider_baner//"
